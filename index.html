@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录 | 例会时间规划系统</title>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>      
+    <script type="text/javascript" src="easyui/locale/easyui-lang-zh_CN.js"></script>   
+    <script type="text/javascript" src="js/lib/md5.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <link rel="stylesheet" type="text/css" href="easyui/themes/material/easyui.css" />    
+    <link rel="stylesheet" type="text/css" href="easyui/themes/icon.css" />
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="js/commonURL.js"></script>
+    <script>
+        axios.defaults.withCredentials = true;
+
+        axios.post(LoginURL)
+            .then(function (response) {
+                const data = response.data;
+                if(data.userAccess){
+                    window.location.href="./main.html"
+                }
+            })
+    </script>
+</head>
+<body>
+    <div id="win" class="easyui-window" title="登录" style="width:300px;height:auto;">
+        <form style="padding:10px 20px 10px 40px;">
+            <label>用户名: <input id="username" type="text"></label>
+            <label>密码: <input id="password" type="password"></label>
+            <div style="padding:5px;text-align:center;">
+                <a onclick="login()" class="easyui-linkbutton" icon="icon-ok">登录</a>
+                <a onclick="signUp()" class="easyui-linkbutton" icon="icon-add">注册</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

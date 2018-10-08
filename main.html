@@ -1,0 +1,85 @@
+<html>
+<head>
+    <meta charset="utf8">
+    <title>例会时间规划</title>
+    <script type="text/javascript" src="js/commonURL.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="js/lib/md5.js"></script>
+    <script type="text/javascript" src="easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>      
+    <script type="text/javascript" src="easyui/locale/easyui-lang-zh_CN.js"></script>  
+    <link rel="stylesheet" type="text/css" href="easyui/themes/material/easyui.css" />    
+    <link rel="stylesheet" type="text/css" href="easyui/themes/icon.css" />
+</head>
+
+<body class="easyui-layout">
+    <div data-options="region:'north'" style="height: 76px;">
+        <h1>例会时间管理系统</h1>
+    </div>
+    <div data-options="region:'west',split:true" title="导航" style="width:175px;">
+        <div class="easyui-accordion" data-options="fit:true,border:false">
+            <div title="例会管理" style="padding:10px;">
+                内容
+            </div>
+            <div title="账户信息" data-options="selected:true" style="padding:10px;">
+                <p>用户名：<span id="usernameSpan"></span></p>
+                <p>部门：<span id="belongSpan"></span></p>
+                <div style="text-align:center;">
+                    <a href="javascript:" class="easyui-linkbutton" onclick="$('#ChPassWin').window('open');">修改密码</a>
+                    <a href="javascript:" class="easyui-linkbutton" onclick="logout()">退出登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',title:'主要',iconCls:'icon-ok'">
+        <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
+            <div title="关于" data-options="href:'./_about.html'" style="padding:10px"></div>
+            <div title="图示" style="padding:5px">
+                <table class="easyui-datagrid"
+                       data-options="url:'datagrid_data1.json',method:'get',singleSelect:true,fit:true,fitColumns:true">
+                    <thead>
+                    <tr>
+                        <th data-options="field:'itemid'" width="80">Item ID</th>
+                        <th data-options="field:'productid'" width="100">Product ID</th>
+                        <th data-options="field:'listprice',align:'right'" width="80">List Price</th>
+                        <th data-options="field:'unitcost',align:'right'" width="80">Unit Cost</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+            <div title="详细" style="padding:5px">
+                <table class="easyui-datagrid"
+                       data-options="url:'datagrid_data1.json',method:'get',singleSelect:true,fit:true,fitColumns:true">
+                    <thead>
+                    <tr>
+                        <th data-options="field:'itemid'" width="80">Item ID</th>
+                        <th data-options="field:'productid'" width="100">Product ID</th>
+                        <th data-options="field:'listprice',align:'right'" width="80">List Price</th>
+                        <th data-options="field:'unitcost',align:'right'" width="80">Unit Cost</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="ChPassWin" class="easyui-window" title="修改密码" closed="true" style="width:300px;">
+        <form style="padding:10px 20px 10px 40px;">
+            <label>原密码: <input id="oldPass-ChPassWin" type="password"></label>
+            <label>新密码: <input id="newPass-ChPassWin" type="password"></label>
+            <label>重复新密码: <input id="newRepeatPass-ChPassWin" type="password"></label>
+            <div style="padding-top:5px;text-align:center;">
+                <a href="javascript:" onclick="chPass()" class="easyui-linkbutton" icon="icon-ok">确定</a>
+                <a href="javascript:" onclick="closeChPassWin()" class="easyui-linkbutton" icon="icon-cancel">取消</a>
+            </div>
+        </form>
+    </div>
+
+    <script type="text/javascript" src="js/main.js"></script>
+    <script>
+        axios.defaults.withCredentials = true;
+        tryLogin();
+        getUserInfo();
+    </script>
+</body>
+</html>
