@@ -40,7 +40,7 @@
                        toolbar="#tb" >
                 </table>
                 <div id="tb">
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="getData()">添加</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="$('#newWin').window('open');">添加</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="alert('删除')">删除</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="alert('修改')">修改</a>
                 </div>
@@ -65,15 +65,17 @@
 
     <div id="newWin" class="easyui-window" title="新建例会" closed="true" style="width:300px;">
         <form style="padding:10px 20px 10px 40px;">
-            <label>例会地点: <input id="roomname-newWin" type=""></label>
+            <label>例会地点: <input id="roomname-newWin" name="roomname"></label>
             <br>
-            <label>开始时间: <input id="time_start-newWin" type=""></label>
+            <label>开始时间: <br><input id="time_start-newWin" class="easyui-datetimebox" name="time_start"
+                               data-options="required:true,showSeconds:false"></label>
             <br>
-            <label>结束时间: <input id="time_end-newWin" type=""></label>
+            <label>结束时间: <br><input id="time_end-newWin" class="easyui-datetimebox" name="time_end"
+                                   data-options="required:true,showSeconds:false"></label>
             <br>
             <div style="padding-top:5px;text-align:center;">
-                <a href="javascript:" onclick="chPass()" class="easyui-linkbutton" icon="icon-ok">确定</a>
-                <a href="javascript:" onclick="closeChPassWin()" class="easyui-linkbutton" icon="icon-cancel">取消</a>
+                <a href="javascript:" onclick="submitRoom()" class="easyui-linkbutton" icon="icon-ok">确定</a>
+                <a href="javascript:" onclick="$('#newWin').window('close');" class="easyui-linkbutton" icon="icon-cancel">取消</a>
             </div>
         </form>
     </div>
@@ -83,6 +85,7 @@
         axios.defaults.withCredentials = true;
         getUserInfo();
         getData();
+        getRoom();
     </script>
 </body>
 </html>

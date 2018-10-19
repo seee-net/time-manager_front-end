@@ -5,7 +5,79 @@ const olePassBox = document.getElementById("oldPass-ChPassWin");
 const newPassBox = document.getElementById("newPass-ChPassWin");
 const newRepeatPassBox = document.getElementById("newRepeatPass-ChPassWin");
 
+const roomnameBox = document.getElementById("roomname-newWin");
+const timestartBox = document.getElementById("time_start-newWin");
+const timeendBox = document.getElementById("time_end-newWin");
+
+let rooms = {};
+const date = {roomid:"", timestart:"", timeend:""};
 const user = {username:""};
+
+function submitRoom(){
+    const room_name = roomnameBox.value;
+    const time_start = timestartBox.value;
+    const time_end = timeendBox.value;
+
+    function getItem(arr,n,v) {
+        for (var i = 0; i < arr.length; i++)
+            if (arr[i][n]===v)
+                return arr[i];
+    }
+
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    };
+
+    var time1 = new Date(time_start).Format("yyyy-MM-dd hh:mm:ss");
+    var time2 = new Date(time_end).Format("yyyy-MM-dd hh:mm:ss");
+
+    date.roomid = getItem(rooms,"roomname", room_name).roomid;
+    date.timestart = time1;
+    date.timeend = time2;
+
+    axios.post(ApplyURL, {
+        room_id: date.roomid,
+        time_start: date.timestart,
+        time_end: date.timeend
+    })
+        .then(function (response) {
+            const data = response.data;
+            getRoom();
+            if(data.applyResult){
+                $.messager.alert("消息","提交成功！","info");
+                $('#newWin').window('close');
+            }else{
+                $.messager.alert("警告","存在冲突！提交失败！","warning");
+            }
+        })
+        .catch(error => $.messager.alert("错误","系统出现异常：" + error,"error"));
+}
+
+function getRoom(){
+    $('#roomname-newWin').combobox({
+        loader: (param,success) => {
+            axios.post(GetRoomURL)
+                .then((response) => {
+                    success(response.data);
+                    rooms = response.data;
+                })
+        },
+        valueField:'roomname',
+        textField:'roomname'
+    });
+}
 
 function getData(){
     $("#dt").datagrid({
