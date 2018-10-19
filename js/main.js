@@ -11,18 +11,19 @@ function getData(){
     $("#dt").datagrid({
         loader: (param,success) => {
                 //跨域请求数据
-                axios.post(ShowData)
+                axios.post(ShowDataURL)
                     .then((response) => success(response.data))
             },
         width:1500,
-        title:"用户列表",
-        iconCls:"icon-search", //两个数组是为了合并单元格
+        title:"例会列表",
+        iconCls:"icon-search",
         columns:[[
             {title:"用户名",field:"username",width: 200},
             {title:"开会地点",field:"room_name",width: 200},
             {title:"开始时间",field:"time_start",width: 200},
             {title:"结束时间",field:"time_end",width: 200}
-        ]] })
+        ]]
+    })
 }
 
 function getUserInfo(){
@@ -35,16 +36,8 @@ function getUserInfo(){
         .catch(error => $.messager.alert("错误", "获取用户信息失败：" + error,"error"));
 }
 
-function tryLogin(){
-    axios.post(LoginURL)
-        .then((response) => {
-            if(response.data.userAccess === false || response.data.userAccess === undefined)
-                window.location.href = "./index.html"
-        })
-}
-
 function logout() {
-    axios.post(LoginURL)
+    axios.post(LogoutURL)
         .then(() => window.location.href = "./index.html")
         .catch(error => $.messager.alert("错误", "系统出现异常：" + error,"error"));
 }
