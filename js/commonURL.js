@@ -4,3 +4,4 @@ const LoginURL = commonURL + '/Login';
 const RegisterURL = commonURL + '/Register';
 const ChPassURL = commonURL + '/ChPass';
 const GetUserInfoURL = commonURL + '/GetUserInfo';
+const ShowData = commonURL + '/ShowData';

@@ -4,7 +4,26 @@ const belongSpan = document.getElementById("belongSpan");
 const olePassBox = document.getElementById("oldPass-ChPassWin");
 const newPassBox = document.getElementById("newPass-ChPassWin");
 const newRepeatPassBox = document.getElementById("newRepeatPass-ChPassWin");
+
 const user = {username:""};
+
+function getData(){
+    $("#dt").datagrid({
+        loader: (param,success) => {
+                //跨域请求数据
+                axios.post(ShowData)
+                    .then((response) => success(response.data))
+            },
+        width:1500,
+        title:"用户列表",
+        iconCls:"icon-search", //两个数组是为了合并单元格
+        columns:[[
+            {title:"用户名",field:"username",width: 200},
+            {title:"开会地点",field:"room_name",width: 200},
+            {title:"开始时间",field:"time_start",width: 200},
+            {title:"结束时间",field:"time_end",width: 200}
+        ]] })
+}
 
 function getUserInfo(){
     axios.post(GetUserInfoURL)
