@@ -14,15 +14,15 @@
 </head>
 
 <body class="easyui-layout">
-    <div data-options="region:'north'" style="height: 76px;">
-        <h1 style="margin-left: 20px; color: #ff811a;">例会时间管理系统</h1>
+    <div data-options="region:'north'" style="height: 76px; background-image: url(img/back/double_lined.png);">
+        <h1 style="margin-left: 20px;">例会时间管理系统</h1>
     </div>
     <div data-options="region:'west',split:true" title="导航" style="width:175px;">
         <div class="easyui-accordion" data-options="fit:true,border:false">
-            <div title="例会管理" style="padding:10px;">
-
+            <div title="通知消息" style="padding:10px; background: url(img/back/leaves.png);">
+                暂无通知
             </div>
-            <div title="账户信息" data-options="selected:true" style="padding:10px;">
+            <div title="账户信息" data-options="selected:true" style="padding:10px; background: url(img/back/leaves.png);">
                 <p>用户名：<span id="usernameSpan"></span></p>
                 <p>部门：<span id="belongSpan"></span></p>
                 <div style="text-align:center;">
@@ -35,8 +35,10 @@
     <div data-options="region:'center',title:'主要',iconCls:'icon-ok'">
         <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
             <div title="关于" data-options="href:'./_about.html'" style="padding:10px"></div>
-            <div title="已安排" style="padding:5px">
-                <table id="tt" class="easyui-datagrid" toolbar="#tb" style="width:100%;height:100%;">
+            <div title="例会管理" style="padding:5px">
+                <table id="tt" class="easyui-datagrid" style="width:100%;height:100%;"
+                       url="http://localhost:8080/ShowData"
+                       toolbar="#tb" >
                     <thead>
                     <tr>
                         <th field="username" width="150">用户名</th>
@@ -46,36 +48,6 @@
                         <th field="time-end" width="150">结束时间</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <td>Data 1</td>
-                        <td>Data 2</td>
-                        <td>Data 3</td>
-                        <td>Data 4</td>
-                        <td>Data 5</td>
-                    </tr>
-                    <tr>
-                        <td>Data 1</td>
-                        <td>Data 2</td>
-                        <td>Data 3</td>
-                        <td>Data 4</td>
-                        <td>Data 5</td>
-                    </tr>
-                    <tr>
-                        <td>Data 1</td>
-                        <td>Data 2</td>
-                        <td>Data 3</td>
-                        <td>Data 4</td>
-                        <td>Data 5</td>
-                    </tr>
-                    <tr>
-                        <td>Data 1</td>
-                        <td>Data 2</td>
-                        <td>Data 3</td>
-                        <td>Data 4</td>
-                        <td>Data 5</td>
-                    </tr>
-                    </tbody>
                 </table>
                 <div id="tb">
                     <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="alert('添加')">添加</a>
