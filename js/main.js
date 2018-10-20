@@ -147,7 +147,7 @@ function editData(){
 
 function openEdit(){
     const row = $('#dt').datagrid('getSelected');
-    roomnameEdit.value = row.room_name;
+    $('#roomname-editWin').combobox('setValue', row.room_name);
     $('#time_start-editWin').datetimebox('setValue', row.time_start);
     $('#time_end-editWin').datetimebox('setValue', row.time_end);
 
@@ -232,7 +232,7 @@ function submitRoom(){
                                 })
                                     .then(function (response) {
                                         const data = response.data;
-                                        if (data.applyResult) {
+                                        if (data.applyResult === "true") {
                                             $.messager.alert("消息", "提交成功！", "info");
                                             getData();
                                             $('#newWin').window('close');
@@ -275,6 +275,18 @@ function submitRoom(){
 
 function getRoom(){
     $('#roomname-newWin').combobox({
+        loader: (param,success) => {
+            axios.post(GetRoomURL)
+                .then((response) => {
+                    success(response.data);
+                    rooms = response.data;
+                })
+        },
+        valueField:'roomname',
+        textField:'roomname'
+    });
+    
+    $('#roomname-editWin').combobox({
         loader: (param,success) => {
             axios.post(GetRoomURL)
                 .then((response) => {
