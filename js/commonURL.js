@@ -9,3 +9,4 @@ const GetUserInfoURL = commonURL + '/GetUserInfo';
 const ShowDataURL = commonURL + '/ShowData';
 const GetRoomURL = commonURL + '/GetRoom';
 const ApplyURL = commonURL + '/Apply';
+const DelDataURL = commonURL + '/DelData';

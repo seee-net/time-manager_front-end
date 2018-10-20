@@ -13,16 +13,44 @@ let rooms = {};
 const date = {roomid:"", timestart:"", timeend:""};
 const user = {username:""};
 
+function delData(){
+    var ids = [];
+    var rows = $('#dt').datagrid('getSelections');
+    for(var i=0; i<rows.length; i++){
+        ids.push({
+            username:rows[i].username,
+            roomid:getItem(rooms,"roomname", rows[i].room_name).roomid,
+            timestart:rows[i].time_start,
+            timeend:rows[i].time_end
+        });
+    }
+
+    axios.post(DelDataURL, {
+        ids
+    })
+        .then(function (response) {
+            const data = response.data;
+            if(data.delResult){
+                $.messager.alert("消息","删除成功！","info");
+                getData();
+            }else{
+                $.messager.alert("错误","删除失败！请询问系统管理员！","error");
+            }
+        })
+        .catch(error => $.messager.alert("错误","系统出现异常：" + error,"error"));
+}
+
+function getItem(arr,n,v) {
+    for (var i = 0; i < arr.length; i++)
+        if (arr[i][n]===v)
+            return arr[i];
+}
+
 function submitRoom(){
     const room_name = roomnameBox.value;
     const time_start = timestartBox.value;
     const time_end = timeendBox.value;
 
-    function getItem(arr,n,v) {
-        for (var i = 0; i < arr.length; i++)
-            if (arr[i][n]===v)
-                return arr[i];
-    }
 
     Date.prototype.Format = function (fmt) { //author: meizz
         var o = {
@@ -54,9 +82,9 @@ function submitRoom(){
     })
         .then(function (response) {
             const data = response.data;
-            getRoom();
             if(data.applyResult){
                 $.messager.alert("消息","提交成功！","info");
+                getData();
                 $('#newWin').window('close');
             }else{
                 $.messager.alert("警告","存在冲突！提交失败！","warning");
