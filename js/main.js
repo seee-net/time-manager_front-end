@@ -51,7 +51,6 @@ function submitRoom(){
     const time_start = timestartBox.value;
     const time_end = timeendBox.value;
 
-
     Date.prototype.Format = function (fmt) { //author: meizz
         var o = {
             "M+": this.getMonth() + 1, //月份
@@ -110,13 +109,14 @@ function getRoom(){
 function getData(){
     $("#dt").datagrid({
         loader: (param,success) => {
-                //跨域请求数据
-                axios.post(ShowDataURL)
-                    .then((response) => success(response.data))
-            },
+            //跨域请求数据
+            axios.post(ShowDataURL)
+                .then((response) => success(response.data))
+        },
         width:1500,
         title:"例会列表",
         iconCls:"icon-search",
+        rownumbers:true,
         remoteSort:false,
         columns:[[
             {title:"用户名",field:"username",width: 200},
@@ -156,33 +156,37 @@ function logout() {
 }
 
 function chPass() {
-    const oldPass = olePassBox.value;
-    const newPass = newPassBox.value;
-    const newRepeatPass = newRepeatPassBox.value;
+    if($('#cf').form('validate')) {
+        const oldPass = olePassBox.value;
+        const newPass = newPassBox.value;
+        const newRepeatPass = newRepeatPassBox.value;
 
-    if(newPass === newRepeatPass){
-        //尝试修改密码
-        const oldMD5Pass = hex_md5(oldPass + user.username);
-        const newMD5Pass = hex_md5(newPass + user.username);
+        if (newPass === newRepeatPass) {
+            //尝试修改密码
+            const oldMD5Pass = hex_md5(oldPass + user.username);
+            const newMD5Pass = hex_md5(newPass + user.username);
 
-        axios.post(ChPassURL,{
-            oldPassword: oldMD5Pass,
-            newPassword: newMD5Pass
-        })
-            .then((response) => {
-                if(response.data.userCh){
-                    $.messager.alert("提示", "密码修改成功！", "info", function () {
-                        closeChPassWin();
-                        tryLogin();
-                    });
-                }else{
-                    $.messager.alert("警告", "密码修改失败！", "warning");
-                }
+            axios.post(ChPassURL, {
+                oldPassword: oldMD5Pass,
+                newPassword: newMD5Pass
             })
-            .catch(error => $.messager.alert("错误", "系统出现异常:" + error, "error"));
-    } else {
-        //重复密码错误
-        $.messager.alert("警告", "两次密码不一致！", "warning");
+                .then((response) => {
+                    if (response.data.userCh) {
+                        $.messager.alert("提示", "密码修改成功！", "info", function () {
+                            closeChPassWin();
+                            tryLogin();
+                        });
+                    } else {
+                        $.messager.alert("警告", "密码修改失败！", "warning");
+                    }
+                })
+                .catch(error => $.messager.alert("错误", "系统出现异常:" + error, "error"));
+        } else {
+            //重复密码错误
+            $.messager.alert("警告", "两次密码不一致！", "warning");
+        }
+    }else{
+        $.messager.alert("警告","请输入所有必填项！","warning");
     }
 }
 
