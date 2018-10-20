@@ -369,15 +369,9 @@ function chPass() {
 }
 
 function closeChPassWin(){
-    olePassBox.value = "";
-    newPassBox.value = "";
-    newRepeatPassBox.value = "";
     $('#ChPassWin').window('close');
 }
 
 function newWinClose() {
-    roomnameBox.value = "";
-    timestartBox.value = "";
-    timeendBox.value = "";
     $('#newWin').window('close');
 }
