@@ -9,35 +9,179 @@ const roomnameBox = document.getElementById("roomname-newWin");
 const timestartBox = document.getElementById("time_start-newWin");
 const timeendBox = document.getElementById("time_end-newWin");
 
+const roomnameEdit = document.getElementById("roomname-editWin");
+const timestartEdit = document.getElementById("time_start-editWin");
+const timeendEdit = document.getElementById("time_end-editWin");
+
 let rooms = {};
 const date = {roomid:"", timestart:"", timeend:""};
 const user = {username:""};
 
-function delData(){
-    var ids = [];
-    var rows = $('#dt').datagrid('getSelections');
-    for(var i=0; i<rows.length; i++){
-        ids.push({
-            username:rows[i].username,
-            roomid:getItem(rooms,"roomname", rows[i].room_name).roomid,
-            timestart:rows[i].time_start,
-            timeend:rows[i].time_end
-        });
-    }
+let oldData = {};
+let newData = {};
 
-    axios.post(DelDataURL, {
-        ids
-    })
-        .then(function (response) {
-            const data = response.data;
-            if(data.delResult){
-                $.messager.alert("消息","删除成功！","info");
-                getData();
-            }else{
-                $.messager.alert("错误","删除失败！请询问系统管理员！","error");
-            }
-        })
-        .catch(error => $.messager.alert("错误","系统出现异常：" + error,"error"));
+function editData(){
+    if($('#ef').form('validate')) {
+        const room_name = roomnameEdit.value;
+        const time_start = timestartEdit.value;
+        const time_end = timeendEdit.value;
+
+        Date.prototype.Format = function (fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        };
+
+        var time1 = new Date(time_start);
+        var time2 = new Date(time_end);
+
+        date.roomid = getItem(rooms, "roomname", room_name).roomid;
+        date.timestart = time1.Format("yyyy-MM-dd hh:mm:ss");
+        date.timeend = time2.Format("yyyy-MM-dd hh:mm:ss");
+
+        if(time2.getTime() - time1.getTime() > 0){
+            $.messager.confirm("操作提示", "您确定要修改这条记录吗？", function (data) {
+                if(data) {
+                    if((time2.getTime() - time1.getTime())/60000 > 180){
+                        $.messager.confirm("操作提示", "例会时长超过三小时，确定修改？", function (data) {
+                            if(data){
+                                axios.post(DelDataURL,oldData)
+                                    .then(function (response) {
+                                        const data = response.data;
+                                        if(data.delResult){
+                                            $.messager.alert("消息","删除旧数据成功！","info");
+                                            axios.post(ApplyURL, {
+                                                room_id: date.roomid,
+                                                time_start: date.timestart,
+                                                time_end: date.timeend
+                                            })
+                                                .then(function (response) {
+                                                    const data = response.data;
+                                                    if (data.applyResult) {
+                                                        $.messager.alert("消息", "修改成功！", "info");
+                                                        getData();
+                                                        $('#editWin').window('close');
+                                                    } else {
+                                                        $.messager.alert("警告", "存在冲突！提交失败！", "warning");
+                                                        axios.post(ApplyURL, oldData)
+                                                            .then(function (response) {
+                                                                const data = response.data;
+                                                                if (data.applyResult) {
+                                                                    $.messager.alert("消息", "回退操作成功！", "info");
+                                                                    getData();
+                                                                } else {
+                                                                    $.messager.alert("错误", "请联系系统管理员！", "error");
+                                                                }
+                                                            })
+                                                            .catch(error => $.messager.alert("错误", "系统出现异常：" + error, "error"));
+                                                    }
+                                                })
+                                                .catch(error => $.messager.alert("错误", "系统出现异常：" + error, "error"));
+                                        }else{
+                                            $.messager.alert("错误","删除失败！请询问系统管理员！","error");
+                                        }
+                                    })
+                                    .catch(error => $.messager.alert("错误","系统出现异常：" + error,"error"));
+                            }
+                        })
+                    }else{
+                        axios.post(DelDataURL,oldData)
+                            .then(function (response) {
+                                const data = response.data;
+                                if(data.delResult){
+                                    $.messager.alert("消息","删除旧数据成功！","info");
+                                    axios.post(ApplyURL, {
+                                        room_id: date.roomid,
+                                        time_start: date.timestart,
+                                        time_end: date.timeend
+                                    })
+                                        .then(function (response) {
+                                            const data = response.data;
+                                            if (data.applyResult) {
+                                                $.messager.alert("消息", "修改成功！", "info");
+                                                getData();
+                                                $('#editWin').window('close');
+                                            } else {
+                                                $.messager.alert("警告", "存在冲突！提交失败！", "warning");
+                                                axios.post(ApplyURL, oldData)
+                                                    .then(function (response) {
+                                                        const data = response.data;
+                                                        if (data.applyResult) {
+                                                            $.messager.alert("消息", "回退操作成功！", "info");
+                                                            getData();
+                                                        } else {
+                                                            $.messager.alert("错误", "请联系系统管理员！", "error");
+                                                        }
+                                                    })
+                                                    .catch(error => $.messager.alert("错误", "系统出现异常：" + error, "error"));
+                                            }
+                                        })
+                                        .catch(error => $.messager.alert("错误", "系统出现异常：" + error, "error"));
+                                }else{
+                                    $.messager.alert("错误","删除失败！请询问系统管理员！","error");
+                                }
+                            })
+                            .catch(error => $.messager.alert("错误","系统出现异常：" + error,"error"));
+                    }
+                }
+            });
+
+        }else{
+            $.messager.alert("警告","输入非法！","warning");
+        }
+
+    }else{
+        $.messager.alert("警告","请输入所有必填项！","warning");
+    }
+}
+
+function openEdit(){
+    const row = $('#dt').datagrid('getSelected');
+    roomnameEdit.value = row.room_name;
+    $('#time_start-editWin').datetimebox('setValue', row.time_start);
+    $('#time_end-editWin').datetimebox('setValue', row.time_end);
+
+    oldData = {
+        username:row.username,
+        roomid:getItem(rooms,"roomname", row.room_name).roomid,
+        timestart:row.time_start,
+        timeend:row.time_end
+    };
+
+    $('#editWin').window('open');
+}
+
+function delData(){
+    const row = $('#dt').datagrid('getSelected');
+    if (row){
+        axios.post(DelDataURL,
+            {
+                username:row.username,
+                roomid:getItem(rooms,"roomname", row.room_name).roomid,
+                timestart:row.time_start,
+                timeend:row.time_end
+            })
+            .then(function (response) {
+                const data = response.data;
+                if(data.delResult){
+                    $.messager.alert("消息","删除成功！","info");
+                    getData();
+                }else{
+                    $.messager.alert("错误","删除失败！请询问系统管理员！","error");
+                }
+            })
+            .catch(error => $.messager.alert("错误","系统出现异常：" + error,"error"));
+    }
 }
 
 function getItem(arr,n,v) {
@@ -154,6 +298,7 @@ function getData(){
         title:"例会列表",
         iconCls:"icon-search",
         rownumbers:true,
+        singleSelect: true,
         remoteSort:false,
         columns:[[
             {title:"用户名",field:"username",width: 200},
