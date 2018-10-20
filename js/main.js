@@ -47,49 +47,86 @@ function getItem(arr,n,v) {
 }
 
 function submitRoom(){
-    const room_name = roomnameBox.value;
-    const time_start = timestartBox.value;
-    const time_end = timeendBox.value;
+    if($('#nf').form('validate')) {
+        const room_name = roomnameBox.value;
+        const time_start = timestartBox.value;
+        const time_end = timeendBox.value;
 
-    Date.prototype.Format = function (fmt) { //author: meizz
-        var o = {
-            "M+": this.getMonth() + 1, //月份
-            "d+": this.getDate(), //日
-            "h+": this.getHours(), //小时
-            "m+": this.getMinutes(), //分
-            "s+": this.getSeconds(), //秒
-            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-            "S": this.getMilliseconds() //毫秒
+        Date.prototype.Format = function (fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
         };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
-            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
-    };
 
-    var time1 = new Date(time_start).Format("yyyy-MM-dd hh:mm:ss");
-    var time2 = new Date(time_end).Format("yyyy-MM-dd hh:mm:ss");
+        var time1 = new Date(time_start);
+        var time2 = new Date(time_end);
 
-    date.roomid = getItem(rooms,"roomname", room_name).roomid;
-    date.timestart = time1;
-    date.timeend = time2;
+        date.roomid = getItem(rooms, "roomname", room_name).roomid;
+        date.timestart = time1.Format("yyyy-MM-dd hh:mm:ss");
+        date.timeend = time2.Format("yyyy-MM-dd hh:mm:ss");
 
-    axios.post(ApplyURL, {
-        room_id: date.roomid,
-        time_start: date.timestart,
-        time_end: date.timeend
-    })
-        .then(function (response) {
-            const data = response.data;
-            if(data.applyResult){
-                $.messager.alert("消息","提交成功！","info");
-                getData();
-                $('#newWin').window('close');
-            }else{
-                $.messager.alert("警告","存在冲突！提交失败！","warning");
-            }
-        })
-        .catch(error => $.messager.alert("错误","系统出现异常：" + error,"error"));
+        if(time2.getTime() - time1.getTime() > 0){
+            $.messager.confirm("操作提示", "您确定要添加这条记录吗？", function (data) {
+                if(data) {
+                    if((time2.getTime() - time1.getTime())/60000 > 180){
+                        $.messager.confirm("操作提示", "例会时长超过三小时，确定添加？", function (data) {
+                            if(data){
+                                axios.post(ApplyURL, {
+                                    room_id: date.roomid,
+                                    time_start: date.timestart,
+                                    time_end: date.timeend
+                                })
+                                    .then(function (response) {
+                                        const data = response.data;
+                                        if (data.applyResult) {
+                                            $.messager.alert("消息", "提交成功！", "info");
+                                            getData();
+                                            $('#newWin').window('close');
+                                        } else {
+                                            $.messager.alert("警告", "存在冲突！提交失败！", "warning");
+                                        }
+                                    })
+                                    .catch(error => $.messager.alert("错误", "系统出现异常：" + error, "error"));
+                            }
+                        })
+                    }else{
+                        axios.post(ApplyURL, {
+                            room_id: date.roomid,
+                            time_start: date.timestart,
+                            time_end: date.timeend
+                        })
+                            .then(function (response) {
+                                const data = response.data;
+                                if (data.applyResult) {
+                                    $.messager.alert("消息", "提交成功！", "info");
+                                    getData();
+                                    $('#newWin').window('close');
+                                } else {
+                                    $.messager.alert("警告", "存在冲突！提交失败！", "warning");
+                                }
+                            })
+                            .catch(error => $.messager.alert("错误", "系统出现异常：" + error, "error"));
+                    }
+                }
+            });
+
+        }else{
+            $.messager.alert("警告","输入非法！","warning");
+        }
+
+    }else{
+        $.messager.alert("警告","请输入所有必填项！","warning");
+    }
 }
 
 function getRoom(){
@@ -156,37 +193,33 @@ function logout() {
 }
 
 function chPass() {
-    if($('#cf').form('validate')) {
-        const oldPass = olePassBox.value;
-        const newPass = newPassBox.value;
-        const newRepeatPass = newRepeatPassBox.value;
+    const oldPass = olePassBox.value;
+    const newPass = newPassBox.value;
+    const newRepeatPass = newRepeatPassBox.value;
 
-        if (newPass === newRepeatPass) {
-            //尝试修改密码
-            const oldMD5Pass = hex_md5(oldPass + user.username);
-            const newMD5Pass = hex_md5(newPass + user.username);
+    if (newPass === newRepeatPass) {
+        //尝试修改密码
+        const oldMD5Pass = hex_md5(oldPass + user.username);
+        const newMD5Pass = hex_md5(newPass + user.username);
 
-            axios.post(ChPassURL, {
-                oldPassword: oldMD5Pass,
-                newPassword: newMD5Pass
+        axios.post(ChPassURL, {
+            oldPassword: oldMD5Pass,
+            newPassword: newMD5Pass
+        })
+            .then((response) => {
+                if (response.data.userCh) {
+                    $.messager.alert("提示", "密码修改成功！", "info", function () {
+                        closeChPassWin();
+                        tryLogin();
+                    });
+                } else {
+                    $.messager.alert("警告", "密码修改失败！", "warning");
+                }
             })
-                .then((response) => {
-                    if (response.data.userCh) {
-                        $.messager.alert("提示", "密码修改成功！", "info", function () {
-                            closeChPassWin();
-                            tryLogin();
-                        });
-                    } else {
-                        $.messager.alert("警告", "密码修改失败！", "warning");
-                    }
-                })
-                .catch(error => $.messager.alert("错误", "系统出现异常:" + error, "error"));
-        } else {
-            //重复密码错误
-            $.messager.alert("警告", "两次密码不一致！", "warning");
-        }
-    }else{
-        $.messager.alert("警告","请输入所有必填项！","warning");
+            .catch(error => $.messager.alert("错误", "系统出现异常:" + error, "error"));
+    } else {
+        //重复密码错误
+        $.messager.alert("警告", "两次密码不一致！", "warning");
     }
 }
 
@@ -195,4 +228,11 @@ function closeChPassWin(){
     newPassBox.value = "";
     newRepeatPassBox.value = "";
     $('#ChPassWin').window('close');
+}
+
+function newWinClose() {
+    roomnameBox.value = "";
+    timestartBox.value = "";
+    timeendBox.value = "";
+    $('#newWin').window('close');
 }
