@@ -117,11 +117,24 @@ function getData(){
         width:1500,
         title:"例会列表",
         iconCls:"icon-search",
+        remoteSort:false,
         columns:[[
             {title:"用户名",field:"username",width: 200},
             {title:"开会地点",field:"room_name",width: 200},
-            {title:"开始时间",field:"time_start",width: 200},
-            {title:"结束时间",field:"time_end",width: 200}
+            {title:"开始时间",field:"time_start",width: 200,sortable:true,
+                sorter:function(a,b){
+                    const time1 = new Date(a);
+                    const time2 = new Date(b);
+                    const time = time1.getTime() - time2.getTime();
+                    return time >= 0 ? 1 : -1;
+                }},
+            {title:"结束时间",field:"time_end",width: 200,sortable:true,
+                sorter:function(a,b){
+                    const time1 = new Date(a);
+                    const time2 = new Date(b);
+                    const time = time1.getTime() - time2.getTime();
+                    return time >= 0 ? 1 : -1;
+                }}
         ]]
     })
 }
