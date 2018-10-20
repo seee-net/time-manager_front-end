@@ -232,7 +232,7 @@ function submitRoom(){
                                 })
                                     .then(function (response) {
                                         const data = response.data;
-                                        if (data.applyResult === "true") {
+                                        if (data.applyResult) {
                                             $.messager.alert("消息", "提交成功！", "info");
                                             getData();
                                             $('#newWin').window('close');
