@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf8">
     <title>例会时间规划</title>
@@ -23,13 +24,16 @@
             <div title="通知消息" style="padding:10px; background: url(img/back/leaves.png);">
                 暂无通知
             </div>
-            <div title="账户信息" data-options="selected:true" style="padding:10px; background: url(img/back/leaves.png);">
-                <p>用户名：<span id="usernameSpan"></span></p>
-                <p>部门：<span id="belongSpan"></span></p>
+            <div title="账户信息" data-options="selected:true" style="text-align: center; padding:10px; background: url(img/back/leaves.png);">
+                <div style="text-align: left;">
+                    <p>用户名：<span id="usernameSpan"></span></p>
+                    <p>部门：<span id="belongSpan"></span></p>
+                </div>
                 <div style="text-align:center;">
                     <a href="javascript:" class="easyui-linkbutton" onclick="$('#ChPassWin').window('open');">修改密码</a>
                     <a href="javascript:" class="easyui-linkbutton" onclick="logout()">退出登录</a>
                 </div>
+                <img src="img/37498010.png" width="100px" style="margin-top: 50px;" />
             </div>
         </div>
     </div>
@@ -37,8 +41,7 @@
         <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
             <div title="关于" data-options="href:'./_about.html'" style="padding:10px"></div>
             <div title="例会管理" style="padding:5px">
-                <table id="dt" class="easyui-datagrid" style="width:100%;height:100%;box-sizing: border-box;"
-                       toolbar="#tb" >
+                <table id="dt" class="easyui-datagrid" style="width:100%;height:100%;box-sizing: border-box;" toolbar="#tb">
                 </table>
                 <div id="tb">
                     <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="$('#newWin').window('open');">添加</a>
@@ -68,11 +71,11 @@
         <form id="nf" style="padding:10px 20px 10px 40px;">
             <label>例会地点: <input id="roomname-newWin" name="roomname" required="true"></label>
             <br>
-            <label>开始时间: <br><input id="time_start-newWin" class="easyui-datetimebox" name="time_start"
-                               data-options="required:true,showSeconds:false" required="true"></label>
+            <label>开始时间: <br><input id="time_start-newWin" class="easyui-datetimebox" name="time_start" data-options="required:true,showSeconds:false"
+                    required="true"></label>
             <br>
-            <label>结束时间: <br><input id="time_end-newWin" class="easyui-datetimebox" name="time_end"
-                                   data-options="required:true,showSeconds:false" required="true"></label>
+            <label>结束时间: <br><input id="time_end-newWin" class="easyui-datetimebox" name="time_end" data-options="required:true,showSeconds:false"
+                    required="true"></label>
             <br>
             <div style="padding-top:5px;text-align:center;">
                 <a href="javascript:" onclick="submitRoom()" class="easyui-linkbutton" icon="icon-ok">确定</a>
@@ -85,11 +88,11 @@
         <form id="ef" style="padding:10px 20px 10px 40px;">
             <label>例会地点: <input id="roomname-editWin" name="roomname" required="true"></label>
             <br>
-            <label>开始时间: <br><input id="time_start-editWin" class="easyui-datetimebox" name="time_start"
-                                    data-options="required:true,showSeconds:false" required="true"></label>
+            <label>开始时间: <br><input id="time_start-editWin" class="easyui-datetimebox" name="time_start" data-options="required:true,showSeconds:false"
+                    required="true"></label>
             <br>
-            <label>结束时间: <br><input id="time_end-editWin" class="easyui-datetimebox" name="time_end"
-                                    data-options="required:true,showSeconds:false" required="true"></label>
+            <label>结束时间: <br><input id="time_end-editWin" class="easyui-datetimebox" name="time_end" data-options="required:true,showSeconds:false"
+                    required="true"></label>
             <br>
             <div style="padding-top:5px;text-align:center;">
                 <a href="javascript:" onclick="editData()" class="easyui-linkbutton" icon="icon-ok">确定</a>
@@ -106,4 +109,5 @@
         getRoom();
     </script>
 </body>
+
 </html>
